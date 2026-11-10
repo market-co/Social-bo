@@ -249,13 +249,6 @@ render();
 </script>
 
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL = "ncyvynzokabgjfsxovle.supabase.co";
-
-const SUPABASE_PUBLISHABLE_KEY =
-"sb_publishable_3Lopiog-UzE3OIRtxN6TUQ_-4AxfNqa";
-
 const supabase = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_PUBLISHABLE_KEY
@@ -296,7 +289,7 @@ const STORAGE_KEY = "social-promotion-tracker-v1";
       const link = document.createElement("a");
       link.href = item.url;
       link.textContent = item.url;
-      link.target = "_blank";
+      link.target = "_blankin";
       link.rel = "noopener noreferrer"
     
      function watchtime( boost) {
