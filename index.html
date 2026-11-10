@@ -69,6 +69,185 @@
     <div id="entries" class="empty">No links added yet.</div>
   </section>
 </main>
+  
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://ncyvynzokabgjfsxovle.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_3Lopiog-UzE3OIRtxN6TUQ_-4AxfNqa";
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+const form = document.querySelector("#trackerForm");
+const list = document.querySelector("#entries");
+
+// Get logged-in user
+async function getUser() {
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error || !data.user) {
+    throw new Error("Please sign in before saving links.");
+  }
+
+  return data.user;
+}
+
+// Load links from Supabase
+async function loadEntries() {
+  const user = await getUser();
+
+  const { data, error } = await supabase
+    .from("social_promotion_links")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+
+  return data || [];
+}
+
+// Display saved links
+async function render() {
+  list.textContent = "Loading links...";
+  list.className = "empty";
+
+  try {
+    const entries = await loadEntries();
+    list.replaceChildren();
+
+    if (!entries.length) {
+      list.textContent = "No links added yet.";
+      return;
+    }
+
+    list.className = "";
+
+    entries.forEach(item => {
+      const row = document.createElement("article");
+      row.className = "entry";
+
+      const title = document.createElement("strong");
+      title.textContent =
+        item.platform + " · " +
+        new Date(item.created_at).toLocaleDateString();
+
+      const link = document.createElement("a");
+      link.href = item.content_url;
+      link.textContent = item.content_url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+
+      const metrics = document.createElement("div");
+      metrics.className = "metrics";
+      metrics.textContent =
+        `Views: ${item.views ?? 0} · Watch time: ${item.watch_time_minutes ?? 0} minutes` +
+        (item.notes ? ` · Notes: ${item.notes}` : "");
+
+      const watchButton = document.createElement("button");
+      watchButton.type = "button";
+      watchButton.textContent = "▶ Watch Video";
+      watchButton.addEventListener("click", () => {
+        window.open(item.content_url, "_blank", "noopener,noreferrer");
+      });
+
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "delete";
+      remove.textContent = "Remove";
+
+      remove.addEventListener("click", async () => {
+        if (!confirm("Delete this tracked link?")) return;
+
+        remove.disabled = true;
+
+        try {
+          const { error } = await supabase
+            .from("social_promotion_links")
+            .delete()
+            .eq("id", item.id);
+
+          if (error) throw error;
+
+          await render();
+        } catch (error) {
+          alert(error.message);
+          remove.disabled = false;
+        }
+      });
+
+      row.append(
+        title,
+        document.createElement("br"),
+        link,
+        metrics,
+        watchButton,
+        remove
+      );
+
+      list.append(row);
+    });
+
+  } catch (error) {
+    list.textContent = error.message;
+    list.className = "empty";
+  }
+}
+
+// Save new link to Supabase
+form.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const submitButton = form.querySelector('button[type="submit"]');
+  submitButton.disabled = true;
+  submitButton.textContent = "Saving...";
+
+  try {
+    const user = await getUser();
+
+    const url = document.querySelector("#url").value.trim();
+    const parsed = new URL(url);
+
+    if (!["http:", "https:"].includes(parsed.protocol)) {
+      throw new Error("Please enter a valid link.");
+    }
+
+    const viewsValue = document.querySelector("#views").value;
+    const watchValue = document.querySelector("#watch").value;
+
+    const record = {
+      user_id: user.id,
+      platform: document.querySelector("#platform").value,
+      content_url: url,
+      views: viewsValue === "" ? 0 : Number(viewsValue),
+      watch_time_minutes: watchValue === "" ? 0 : Number(watchValue),
+      notes: document.querySelector("#engagement").value.trim()
+    };
+
+    const { error } = await supabase
+      .from("social_promotion_links")
+      .insert(record);
+
+    if (error) throw error;
+
+    form.reset();
+    alert("Link saved successfully!");
+    await render();
+
+  } catch (error) {
+    alert("Could not save: " + error.message);
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Save link";
+  }
+});
+
+// Initial display
+render();
+</script>
+
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
