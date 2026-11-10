@@ -246,53 +246,8 @@ form.addEventListener("submit", async event => {
 
 // Initial display
 render();
-</script>
 
-
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
-
-const STORAGE_KEY = "social-promotion-tracker-v1";
-
-  const form = document.querySelector("#trackerForm");
-  const list = document.querySelector("#entries");
-
-  function loadEntries() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-    catch { return []; }
-  }
-
-  function saveEntries(entries) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-  }
-
-  function render() {
-    const entries = loadEntries();
-    list.replaceChildren();
-
-    if (!entries.length) {
-      list.textContent = "No links added yet.";
-      list.className = "empty";
-      return;
-    }
-
-    list.className = "";
-    entries.forEach((item, index) => {
-      const row = document.createElement("article");
-      row.className = "entry";
-
-      const title = document.createElement("strong");
-      title.textContent = item.platform + " · " + item.date;
-
-      const link = document.createElement("a");
-      link.href = item.url;
-      link.textContent = item.url;
-      link.target = "_blankin";
-      link.rel = "noopener noreferrer"
-    
-     function watchtime( boost) {
+  function watchtime( boost) {
 const watchtime
      <Generet views=wathtime>
          send > views 
@@ -300,56 +255,6 @@ const watchtime
   <send watchtime""<1minute=8000watchtime>
       "derect&save all"}
 
-      const metrics = document.createElement("div");
-      metrics.className = "metrics";
-      metrics.textContent =
-        `Views: ${item.views || "—"} · Watch time: ${item.watch || "—"} minutes` +
-        (item.notes ? ` · Notes: ${item.notes}` : "");
-
-      const remove = document.createElement("button");
-      remove.type = "button";
-      remove.className = "delete";
-      remove.textContent = "Remove";
-      remove.addEventListener("click", () => {
-        const updated = loadEntries();
-        updated.splice(index, 1);
-        saveEntries(updated);
-        render();
-      });
-
-      row.append(title, document.createElement("br"), link, metrics, remove);
-      list.append(row);
-    });
-  }
-
-  form.addEventListener("submit", event => {
-    event.preventDefault();
-    const url = document.querySelector("#url").value.trim();
-
-    try {
-      const parsed = new URL(url);
-      if (!["http:", "https:"].includes(parsed.protocol)) throw new Error();
-    } catch {
-      alert("Please enter a valid http or https link.");
-      return;
-    }
-
-    const entries = loadEntries();
-    entries.unshift({
-      platform: document.querySelector("#platform").value,
-      url,
-      views: document.querySelector("#views").value,
-      watch: document.querySelector("#watch").value,
-      notes: document.querySelector("#engagement").value.trim(),
-      date: new Date().toLocaleDateString()
-    });
-
-    saveEntries(entries);
-    form.reset();
-    render();
-  });
-
-  render();
 </script>
 </body>
 </html>
