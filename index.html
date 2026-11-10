@@ -1,0 +1,171 @@
+</html<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Social Promotion Tracker</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 28px 16px; font: 16px/1.5 system-ui, sans-serif;
+      color: #172033; background: #f3f6fb;
+    }
+    main { max-width: 850px; margin: auto; }
+    h1 { margin-bottom: 6px; }
+    .note { color: #536078; margin-top: 0; }
+    form, .card {
+      background: white; border: 1px solid #e1e7f0; border-radius: 14px;
+      padding: 20px; margin: 18px 0; box-shadow: 0 4px 16px #19335b0a;
+    }
+    label { display: block; font-weight: 650; margin: 12px 0 5px; }
+    input, select, button {
+      width: 100%; padding: 11px 12px; border: 1px solid #cbd5e1;
+      border-radius: 8px; font: inherit;
+    }
+    button { margin-top: 16px; border: 0; background: #315ce7; color: white;
+      font-weight: 700; cursor: pointer; }
+    button:hover { background: #2449c5; }
+    .entry { border-top: 1px solid #e6ebf2; padding: 14px 0; }
+    .entry:first-child { border-top: 0; }
+    .entry a { overflow-wrap: anywhere; }
+    .metrics { color: #536078; font-size: .92rem; }
+    .delete { width: auto; padding: 6px 10px; margin: 8px 0 0; background: #9b2635; }
+    .empty { color: #68758a; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Social Promotion Tracker</h1>
+  <p class="note">Organize content links and record analytics you obtain through platform-approved tools.</p>
+
+  <form id="trackerForm">
+    <label for="platform">Platform</label>
+    <select id="platform" required>
+      <option>YouTube</option><option>Facebook</option><option>TikTok</option>
+      <option>Instagram</option><option>Other</option>
+    </select>
+
+    <label for="url">Content link</label>
+    <input id="url" type="url" placeholder="https://…" required>
+
+    <label for="views">Views (optional)</label>
+    <input id="views" type="number" min="0" placeholder="100000">
+
+    <label for="watch">Watch time in minutes (optional)</label>
+    <input id="watch" type="number" min="0" step="any" placeholder="8000">
+
+    <label for="engagement">Notes (optional)</label>
+    <input id="engagement" maxlength="200" placeholder="Campaign or analytics notes">
+
+    <button type="submit">Save link</button>
+  </form>
+          <Button type="startwatch">watch video  </button></boost>
+
+<button type="startwatching"<1minute =1000watchitime>="save&derect<sendviews into watch time"> 🎬send watchtime</button></div>
+ <div class="YouTube"><h4>▶ Watch Video</h4>
+  <section class="save">
+      
+    <h2>Your tracked links</h2>
+    <div id="entries" class="empty">No links added yet.</div>
+  </section>
+</main>
+
+<script>
+  const STORAGE_KEY = "social-promotion-tracker-v1";
+  const form = document.querySelector("#trackerForm");
+  const list = document.querySelector("#entries");
+
+  function loadEntries() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function saveEntries(entries) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  }
+
+  function render() {
+    const entries = loadEntries();
+    list.replaceChildren();
+
+    if (!entries.length) {
+      list.textContent = "No links added yet.";
+      list.className = "empty";
+      return;
+    }
+
+    list.className = "";
+    entries.forEach((item, index) => {
+      const row = document.createElement("article");
+      row.className = "entry";
+
+      const title = document.createElement("strong");
+      title.textContent = item.platform + " · " + item.date;
+
+      const link = document.createElement("a");
+      link.href = item.url;
+      link.textContent = item.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer"
+    
+     function watchtime( boost) {
+const watchtime
+     <Generet views=wathtime>
+         send > views 
+     derect views to link""
+  <send watchtime""<1minute=8000watchtime>
+      "derect&save all"}
+
+      const metrics = document.createElement("div");
+      metrics.className = "metrics";
+      metrics.textContent =
+        `Views: ${item.views || "—"} · Watch time: ${item.watch || "—"} minutes` +
+        (item.notes ? ` · Notes: ${item.notes}` : "");
+
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "delete";
+      remove.textContent = "Remove";
+      remove.addEventListener("click", () => {
+        const updated = loadEntries();
+        updated.splice(index, 1);
+        saveEntries(updated);
+        render();
+      });
+
+      row.append(title, document.createElement("br"), link, metrics, remove);
+      list.append(row);
+    });
+  }
+
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    const url = document.querySelector("#url").value.trim();
+
+    try {
+      const parsed = new URL(url);
+      if (!["http:", "https:"].includes(parsed.protocol)) throw new Error();
+    } catch {
+      alert("Please enter a valid http or https link.");
+      return;
+    }
+
+    const entries = loadEntries();
+    entries.unshift({
+      platform: document.querySelector("#platform").value,
+      url,
+      views: document.querySelector("#views").value,
+      watch: document.querySelector("#watch").value,
+      notes: document.querySelector("#engagement").value.trim(),
+      date: new Date().toLocaleDateString()
+    });
+
+    saveEntries(entries);
+    form.reset();
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>
